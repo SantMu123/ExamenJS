@@ -1,22 +1,33 @@
 import { LitElement, css, html } from 'lit'
-
+import { MovieShow, 
+  MovieShowActors, 
+  MovieShowTitles,
+  MovieShowIDandTitles,
+  MovieShowURLs } from "./Visualizar.js"
+import { getMoviesYearSort,
+  getMoviesAllMoviesAndID,
+  getMoviesForActor, 
+} from "./Componentes/getData.js"
 
 export class MyElement extends LitElement {
   
 
   constructor() {
     super();
-    
+    //this.movies = getMovies()
   }
 
   render() {
     return html`
-      <section>
-        <my-side-bar></my-side-bar>
-      </section>
-      <section>
-        <my-main-content></my-main-content>
-      </section>
+      <script>
+        let Movies = getMovies()
+        console.log(Movies.description)
+      </script>
+      <head><link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'></head>
+      
+      <my-side-bar></my-side-bar>
+      <my-main-content></my-main-content>
+    
       
     `
   }
@@ -41,16 +52,35 @@ export class MySideBar extends LitElement{
     super();
     
   }
-
+  showUrls(){
+    MovieShowURLs(getMoviesForActor)
+  }
+  showIDandTitles(){
+    MovieShowIDandTitles(getMoviesForActor)
+  }
+  showTitles(){
+    MovieShowTitles(getMoviesForActor)
+  }
+  showActors(){
+    MovieShowActors(getMoviesForActor)
+  }
+  showRanking(){
+    MovieShow(getMoviesAllMoviesAndID)
+  }
+  showAll(event){
+    //getMovies()
+    MovieShow(getMoviesYearSort)
+   }
   render() {
     return html`
+      <head><link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'></head>
       <div id = "sidebar">
         <a href="#" class="brand"><i class='bx bxs-smile icon'></i> AdminSite</a>
         <ul class="side-menu">
           <li><a href="#" class="active"><i class='bx bxs-dashboard icon' ></i> Dashboard</a></li>
           <li class="divider" data-text="main">Main</li>
           <li>
-            <a href="#"><i class='bx bxs-inbox icon' ></i> Elements <i class='bx bx-chevron-right icon-right' ></i></a>
+            <a @click="${this.showAll}" href="#"><i class='bx bxs-inbox icon' ></i> Fecha de Estreno <i class='bx bx-chevron-right icon-right' ></i></a>
             <ul class="side-dropdown">
               <li><a href="#">Alert</a></li>
               <li><a href="#">Badges</a></li>
@@ -58,12 +88,13 @@ export class MySideBar extends LitElement{
               <li><a href="#">Button</a></li>
             </ul>
           </li>
-          <li><a href="#"><i class='bx bxs-chart icon' ></i> Charts</a></li>
-          <li><a href="#"><i class='bx bxs-widget icon' ></i> Widgets</a></li>
-          <li class="divider" data-text="table and forms">Table and forms</li>
-          <li><a href="#"><i class='bx bx-table icon' ></i> Tables</a></li>
+          <li><a @click="${this.showRanking}" href="#"><i class='bx bxs-chart icon' ></i> Ranking IMDB</a></li>
+          <li><a @click="${this.showActors}" href="#"><i class='bx bxs-widget icon' ></i> Filtro por Actores</a></li>
+          <li class="divider" data-text="table and forms"></li>
+          <li><a @click="${this.showTitles}" href="#"><i class='bx bx-table icon' ></i> Todos los titulos</a></li>
           <li>
-            <a href="#"><i class='bx bxs-notepad icon' ></i> Forms <i class='bx bx-chevron-right icon-right' ></i></a>
+            <a href="#" @click="${this.showIDandTitles}"><i class='bx bxs-notepad icon' ></i> Consultar Identificadores y titulos <i class='bx bx-chevron-right icon-right' ></i></a>
+            <a href="#" @click="${this.showUrls}"><i class='bx bxs-notepad icon' ></i> Consultar URL y Tipos <i class='bx bx-chevron-right icon-right' ></i></a>
             <ul class="side-dropdown">
               <li><a href="#">Basic</a></li>
               <li><a href="#">Select</a></li>
@@ -278,7 +309,9 @@ export class MyNavBar extends LitElement{
 
   render() {
     return html`
+      <head><link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'></head>
       <nav>
+        
         <i class='bx bx-menu toggle-sidebar' ></i>
         <form action="#">
           
@@ -427,6 +460,7 @@ export class MyMiddleContent extends LitElement{
 
   render() {
     return html`
+      <head><link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'></head>
       <main>
         <h1 class="title">Dashboard</h1>
         <ul class="breadcrumbs">
@@ -558,7 +592,7 @@ export class MyMiddleContent extends LitElement{
         height: 10px;
         width: 100%;
         border-radius: 10px;
-        background: var(--grey);
+        background: gray;
         overflow-y: hidden;
         position: relative;
         margin-bottom: 4px;
@@ -569,8 +603,8 @@ export class MyMiddleContent extends LitElement{
         top: 0;
         left: 0;
         height: 100%;
-        background: var(--blue);
-        width: var(--value);
+        background: blue;
+        width: 10em;
       }
       main .card .label {
         font-size: 14px;
@@ -752,3 +786,31 @@ export class MyMiddleContent extends LitElement{
 }
 
 customElements.define('my-middle-content', MyMiddleContent)
+
+
+const wrap1 = document.querySelector("my-element")
+//console.log(wrap1)
+const wrap2 = wrap1.shadowRoot.querySelector("my-side-bar")
+//console.log(wrap2)
+const allDropdown = wrap1.shadowRoot.querySelectorAll('#sidebar .side-dropdown');
+//console.log(allDropdown)
+
+const sidebar = document.getElementById('sidebar');
+allDropdown.forEach(item=> {
+	const a = item.parentElement.querySelector('a:first-child');
+	a.addEventListener('click', function (e) {
+		e.preventDefault();
+
+		if(!this.classList.contains('active')) {
+			allDropdown.forEach(i=> {
+				const aLink = i.parentElement.querySelector('a:first-child');
+
+				aLink.classList.remove('active');
+				i.classList.remove('show');
+			})
+		}
+
+		this.classList.toggle('active');
+		item.classList.toggle('show');
+	})
+})
